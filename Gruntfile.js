@@ -9,10 +9,10 @@ module.exports = function(grunt) {
 
 	var js_assets_dest = vision_path + "/website/public/js/assets/";
 	var js_watch_files = [vision_path + "/website/public/js/**/*.js", "!" + js_assets_dest, assets_xml];
-	var js_sections =  ["marketingcenter.head.min.js", "marketingcenter.inline.js"]; // grunt --js-sections "a,b,c"
+	var js_sections =  ["ngbundle.head.js", "ngbundle.head.min.js", "marketingcenter.inline.js", "choosecontacts.inline.js"]; // grunt --js-sections "a,b,c"
 
 	var css_assets_dest = vision_path + "/website/public/themes/default/css/assets/"; // grunt --css-sections "x,y,z"
-	var css_watch_files = [vision_path + "/website/public/themes/default/css/**/*.css", "!" + css_assets_dest, assets_xml];
+	var css_watch_files = [vision_path + "/website/public/themes/default/**/*.css", "!" + css_assets_dest, assets_xml];
 	var css_sections =  ["marketingcenter.css"];
 
 	var css_clean_options = {
