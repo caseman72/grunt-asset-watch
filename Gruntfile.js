@@ -1,19 +1,20 @@
+"use strict";
 module.exports = function(grunt) {
 	var fs = require("fs")
 	var path = require("path");
 	var xml_parser = require("xml2js");
 	var CleanCSS = require("clean-css");
 
-	var vision_path = (grunt.option("base-path") || "/var/www/vision").replace(/\/+$/, ""); // grunt --base-path "/your/root/path"
+	var vision_path = path.resolve(grunt.option("base-path") || "/var/www/vision").replace(/\/+$/, ""); // grunt --base-path "/your/root/path"
 	var assets_xml = vision_path + "/website/etc/siteDefinition/assets.xml";
 
 	var js_assets_dest = vision_path + "/website/public/js/assets/";
 	var js_watch_files = [vision_path + "/website/public/js/**/*.js", "!" + js_assets_dest, assets_xml];
 	var js_sections =  ["ngbundle.head.js", "ngbundle.head.min.js", "marketingcenter.inline.js", "choosecontacts.inline.js"]; // grunt --js-sections "a,b,c"
 
-	var css_assets_dest = vision_path + "/website/public/themes/default/css/assets/"; // grunt --css-sections "x,y,z"
+	var css_assets_dest = vision_path + "/website/public/themes/default/css/assets/";
 	var css_watch_files = [vision_path + "/website/public/themes/default/**/*.css", "!" + css_assets_dest, assets_xml];
-	var css_sections =  ["marketingcenter.css"];
+	var css_sections =  ["marketingcenter.css"]; // grunt --css-sections "x,y,z"
 
 	var css_clean_options = {
 		keepSpecialComments: 0,
@@ -32,6 +33,7 @@ module.exports = function(grunt) {
 		concat: {
 			js_assets: {
 				options: {
+					//banner: '"use strict";' + "\n",  .replace(/(^|\n)[ \t]*(?:'use strict'|"use strict");?\s*/g, "$1")
 					process: function(src, filepath) {
 						return "/* " + filepath.replace(/^.*?\/js\//, "/js/") + " */\n" + src + "\n";
 					},
