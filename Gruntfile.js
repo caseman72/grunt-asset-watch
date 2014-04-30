@@ -10,11 +10,20 @@ module.exports = function(grunt) {
 
 	var js_assets_dest = vision_path + "/website/public/js/assets/";
 	var js_watch_files = [vision_path + "/website/public/js/**/*.js", "!" + js_assets_dest, assets_xml];
-	var js_sections =  ["ngbundle.head.js", "ngbundle.head.min.js", "marketingcenter.inline.js", "choosecontacts.inline.js"]; // grunt --js-sections "a,b,c"
+	var js_sections =  ["ngbundle.head.js", "ngbundle.head.min.js", "marketingcenter.inline.js", "choosecontacts.inline.js",
+		"mobilecrm.head.js", "mobilecrm.head.min.js", "mobilecrm.inline.js" ]; // grunt --js-sections "a,b,c"
 
 	var css_assets_dest = vision_path + "/website/public/themes/default/css/assets/";
 	var css_watch_files = [vision_path + "/website/public/themes/default/**/*.css", "!" + css_assets_dest, assets_xml];
 	var css_sections =  ["marketingcenter.css"]; // grunt --css-sections "x,y,z"
+
+	var app_assets_files = {};
+	app_assets_files[vision_path + "/website/etc/appConfig.dev.xml"] = vision_path + "/website/etc/appConfig.xml";
+	app_assets_files[vision_path + "/website/etc/dbConfig.dev.xml"] = vision_path + "/website/etc/dbConfig.xml";
+//	app_assets_files[vision_path + "/website/etc/siteDefinition/vision-crm.xml"] = vision_path + "/website/etc/siteDefinition/vision-crm.xml";
+
+	var env00 = "env" + ("00" + (grunt.option("env") || "04")).replace(/[^0-9]+/, "").slice(-2); // grunt --env "02"
+	var use_assets = grunt.option("php") ? "0" : "1"; // grunt --php 1
 
 	var css_clean_options = {
 		keepSpecialComments: 0,
@@ -31,11 +40,37 @@ module.exports = function(grunt) {
 	// watch config
 	grunt.initConfig({
 		concat: {
+			app_assets: {
+				options: {
+					process: function(src, filepath) {
+
+						if (filepath.match(/vision-crm/)) {
+							// todo update vision-crm to use css assets
+						}
+						else {
+							// fix these things
+							src = src.
+								replace(/\<versionTimeStamp\>0/, "<versionTimeStamp>1").
+								replace(/\<useAssets\>[01]/, "<useAssets>"+use_assets).
+								replace(/\<enableGoogleAnalytics\>1/, "<enableGoogleAnalytics>0").
+								replace(/\<enableGoogleAdWords\>1/, "<enableGoogleAdWords>0").
+								replace(/\<enableTracking\>1/, "<enableTracking>0").
+								replace(/\<enableMarketLeaderTracking\>1/, "<enableMarketLeaderTracking>0").
+								replace(/\<enableTracking\>1/, "<enableTracking>0").
+								replace(/enabled="true"/g, 'enabled="false"').
+								replace(/env[0-9][0-9]/g,  env00);
+						}
+
+						return src;
+					},
+				},
+				files: app_assets_files
+			},
 			js_assets: {
 				options: {
 					//banner: '"use strict";' + "\n",  .replace(/(^|\n)[ \t]*(?:'use strict'|"use strict");?\s*/g, "$1")
 					process: function(src, filepath) {
-						return "/* " + filepath.replace(/^.*?\/js\//, "/js/") + " */\n" + src + "\n";
+						return "/* " + filepath.replace(/^.*?\/js\//, "/js/") + " */\n" + src.trim() + "\n\n";
 					},
 				},
 				files: {
@@ -139,6 +174,16 @@ module.exports = function(grunt) {
 		}
 	});
 
+
 	// Default task(s).
 	grunt.registerTask("default", ["parse", "concat", "watch"]);
+
+	process.on('SIGINT', function() {
+		// return vision-crm to normal and then exit
+
+		console.log("\n");
+		process.exit(0);
+		console.log("\n");
+	});
 };
+
