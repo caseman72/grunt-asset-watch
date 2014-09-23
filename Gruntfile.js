@@ -22,8 +22,10 @@ module.exports = function(grunt) {
 	app_assets_files[vision_path + "/website/etc/dbConfig.dev.xml"] = vision_path + "/website/etc/dbConfig.xml";
 //	app_assets_files[vision_path + "/website/etc/siteDefinition/vision-crm.xml"] = vision_path + "/website/etc/siteDefinition/vision-crm.xml";
 
-	var env00 = "env" + ("00" + (grunt.option("env") || "04")).replace(/[^0-9]+/, "").slice(-2); // grunt --env "02"
+	var env00 = "env" + ("00" + (grunt.option("env") || "02")).replace(/[^0-9]+/, "").slice(-2); // grunt --env "02"
 	var use_assets = grunt.option("php") ? "0" : "1"; // grunt --php 1
+
+	console.log("using env = "+ env00 +"\n");
 
 	var css_clean_options = {
 		keepSpecialComments: 0,
@@ -55,6 +57,7 @@ module.exports = function(grunt) {
 								replace(/\<enableGoogleAnalytics\>1/, "<enableGoogleAnalytics>0").
 								replace(/\<enableGoogleAdWords\>1/, "<enableGoogleAdWords>0").
 								replace(/\<enableTracking\>1/, "<enableTracking>0").
+								replace(/\<profileInDebug\>[01]/, "<profileInDebug>0").
 								replace(/\<enableMarketLeaderTracking\>1/, "<enableMarketLeaderTracking>0").
 								replace(/\<enableTracking\>1/, "<enableTracking>0").
 								replace(/enabled="true"/g, 'enabled="false"').
