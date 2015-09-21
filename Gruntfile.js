@@ -15,11 +15,11 @@ module.exports = function(grunt) {
 		"ngbundle.head.js", "ngbundle.head.min.js",
 		"editor.head.js", "editor.head.min.js",
 		"marketingcenter.inline.js",
-		"choosecontacts.inline.js"
-		//"nrtsupport.inline.js,
-		//"mobilecrm.head.js",
-		//"mobilecrm.head.min.js",
-		//"mobilecrm.inline.js"
+		"choosecontacts.inline.js",
+		"mobilecrm.head.js",
+		"mobilecrm.head.min.js",
+		"mobilecrm.inline.js",
+		"nrtsupport.inline.js"
 	];
 	// TODO grunt --js-sections "a,b,c"
 
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
 	app_assets_files[vision_path + "/website/etc/appConfig.dev.xml"] = vision_path + "/website/etc/appConfig.xml";
 	app_assets_files[vision_path + "/website/etc/dbConfig.dev.xml"] = vision_path + "/website/etc/dbConfig.xml";
 
-	var env00 = "env" + ("00" + (grunt.option("env") || "02")).replace(/[^0-9]+/, "").slice(-2); // grunt --env "02"
+	var env00 = "env" + ("00" + (grunt.option("env") || "03")).replace(/[^0-9]+/, "").slice(-2); // grunt --env "02"
 	console.log("using env = "+ env00 +"\n");
 
 	// load the plugins
@@ -46,10 +46,11 @@ module.exports = function(grunt) {
 						src = src.
 							replace(/\<versionTimeStamp\>0/, "<versionTimeStamp>1").
 							replace(/\<useAssets\>[01]/, "<useAssets>"+use_assets).
-							replace(/\<enableGoogleAnalytics\>1/, "<enableGoogleAnalytics>0").
+							replace(/\<enableGoogleAnalytics\>[01]/, "<enableGoogleAnalytics>0").
 							replace(/\<enableGoogleAdWords\>1/, "<enableGoogleAdWords>0").
 							replace(/\<enableTracking\>1/, "<enableTracking>0").
 							replace(/\<profileInDebug\>[01]/, "<profileInDebug>0").
+							replace(/\<wsdlDomain\>[^<]*\<\/wsdlDomain\>/g, "<wsdlDomain>oneservedev."+ env00 +"</wsdlDomain>").
 							replace(/\<enableMarketLeaderTracking\>1/, "<enableMarketLeaderTracking>0").
 							replace(/\<enableTracking\>1/, "<enableTracking>0").
 							replace(/enabled="true"/g, 'enabled="false"').
@@ -66,7 +67,11 @@ module.exports = function(grunt) {
 					process: function(src/*, filepath*/) {
 						// update with env
 						src = src.
-							replace(/http:\/\/oneservedev\.env[0-9][0-9]\//, "http://oneservedev."+ env00 +"/")
+							replace(/http:\/\/oneservedev\.env[0-9][0-9]\//, "http://oneservedev."+ env00 +"/").
+							replace(/http:\/\/oneserverender\.env[0-9][0-9]\//, "http://oneserverender."+ env00 +"/").
+							replace(/http:\/\/images\.marketleader\.env[0-9][0-9]\//, "http://images.marketleader."+ env00 +"/")
+						;
+
 						return src;
 					}
 				},
